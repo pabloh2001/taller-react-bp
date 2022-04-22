@@ -1,4 +1,5 @@
 import React from "react";
+import { nanoid } from "nanoid";
 
 const Doctor = () => {
     const [id, setId] = React.useState('')
@@ -8,7 +9,9 @@ const Doctor = () => {
     const [time, setTime] = React.useState('')
     const [reason, setReason] = React.useState('')
     const [state, setState] = React.useState('')
-
+    const [list, setList] = React.useState([])
+    const [editMode, setEditMode] = React.useState(null)
+    const [error, setError] = React.useState(null)
 
 
     return (
@@ -20,9 +23,9 @@ const Doctor = () => {
                 <h4 className="text-center">Listado de Citas</h4>
                 <ul className="list-group">
                 {
-                    lista.map((item)=>(
+                    list.map((item)=>(
                         <li className='list-group-item' key={item.id}>
-                            <span className='lead'>{item.nombreFruta} - {item.nombreDescripcion}</span>
+                            <span className='lead'>{item.namePatient} - {item.nombreDescripcion}</span>
                             <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> eliminar(item.id)}>Eliminar</button>
                             <button className='btn btn-warning btn-sm float-end' onClick={()=> auxEditar(item)}>editar</button>
                         </li>
