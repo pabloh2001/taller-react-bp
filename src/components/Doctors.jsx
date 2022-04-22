@@ -1,6 +1,9 @@
 import React from "react";
 import { nanoid } from "nanoid";
 import {firebase} from '../firebase'
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+const mySwal = withReactContent(Swal)
 
 const Doctor = () => {
     const [id, setId] = React.useState('')
@@ -14,6 +17,27 @@ const Doctor = () => {
     const [list, setList] = React.useState([])
     const [editMode, setEditMode] = React.useState(null)
     const [error, setError] = React.useState(null)
+
+    React.useEffect(()=>{
+        const getData = async () =>{
+            try{
+                const db = firebase.firestore()
+                const data = await db.collection('doctores').get()
+                const array = data.docs.map(item =>(
+                    {
+                        id:item.id, ...item.data()
+                    }
+                ))
+                setList(array)
+
+            }catch(error){
+                console.error(error)
+            }
+        }
+        getData()
+
+    })
+
 
 
     const saveDoctor = async (e) => {
@@ -43,8 +67,8 @@ const Doctor = () => {
                 ...list,
                 {
                     id: nanoid(),
-                    namePatient: namePatient,
-                    nameDoctor: nameDoctor,
+                    patient: namePatient,
+                    doctor: nameDoctor,
                     date: date,
                     time: time,
                     reason: reason,
@@ -67,8 +91,8 @@ const Doctor = () => {
     }
 
     const auxUpdate = (item) => {
-        setNamePatient(item.namePatient)
-        setNameDoctor(item.nameDoctor)
+        setNamePatient(item.patient)
+        setNameDoctor(item.doctor)
         setDate(item.date)
         setTime(item.time)
         setReason(item.reason)
@@ -133,28 +157,47 @@ const Doctor = () => {
         <div className='row'>
             <div className="col-8">
                 <h4 className="text-center">Listado de Citas</h4>
-                <ul className="list-group">
-                {
-                    list.map((item)=>(
-                        <li className='list-group-item' key={item.id}>
-                            <span className='lead'>{item.namePatient} - {item.nombreDescripcion}</span>
-                            <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> eliminar(item.id)}>Eliminar</button>
-                            <button className='btn btn-warning btn-sm float-end' onClick={()=> auxEditar(item)}>editar</button>
-                        </li>
-                    ))
-                }
-                </ul>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Medico</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Razón de la Cita</th>
+                            <th>Comentarios</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        list.map((item) => (
+                            <tr key={item.id}>
+                                <td>{item.patient}</td>
+                                <td>{item.doctor}</td>
+                                <td>{item.date}</td>
+                                <td>{item.time}</td>
+                                <td>{item.reason}</td>
+                                <td>{item.coments}</td>
+                                <td>{item.state}</td>
+                                <td>
+                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> deleteDoctor(item.id)}>Eliminar</button>
+                            <button className='btn btn-warning btn-sm float-end' onClick={()=> auxUpdate(item)}>editar</button>
+                                </td>
+                            </tr>
+                        ))
+                    }
+                    </tbody>
+                </table>
             </div>
             <div className="col-4">
                 <h4 className="text-center">
                     {
-                        modoEdicion ? 'Editar Frutas': 'Agregar Frutas'
+                        editMode ? 'Editar Doctor': 'Agregar Doctor'
                     }
                 </h4>
-                <form onSubmit={modoEdicion ? editar: guardarDatos}>
-                    {
-                        error ? <span className='text-danger'>{error}</span> : null
-                    }
+                <form onSubmit={editMode ? updateDoctor: saveDoctor}>
                     <input
                         className='form-control mb-2'
                         type="text"
@@ -207,13 +250,13 @@ const Doctor = () => {
 
 
                     {
-                        !modoEdicion? (
+                        !editMode? (
                             <button className='btn btn-primary btn-block' type='submit'>Agregar</button>
                         )
                         :
                         (  <>
                             <button className='btn btn-warning btn-block' type='submit'>Editar</button>
-                            <button className='btn btn-dark btn-block mx-2' onClick={() => cancelar()}>Cancelar</button>
+                            <button className='btn btn-dark btn-block mx-2' onClick={() => cancel()}>Cancelar</button>
                             </>
                         )
                     }
@@ -224,3 +267,5 @@ const Doctor = () => {
     </div>
     )
 }
+
+export default Doctor
