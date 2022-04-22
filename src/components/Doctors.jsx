@@ -9,13 +9,14 @@ const Doctor = () => {
     const [date, setDate] = React.useState('')
     const [time, setTime] = React.useState('')
     const [reason, setReason] = React.useState('')
+    const [coments, setComents] = React.useState('')
     const [state, setState] = React.useState('')
     const [list, setList] = React.useState([])
     const [editMode, setEditMode] = React.useState(null)
     const [error, setError] = React.useState(null)
 
 
-    const save = async (e) => {
+    const saveDoctor = async (e) => {
         e.preventDefault()
 
         if (!namePatient.trim()) {
@@ -34,6 +35,7 @@ const Doctor = () => {
                 date: date,
                 time: time,
                 reason: reason,
+                coments: coments,
                 state: state
             }
             await db.collection('doctores').add(cita)
@@ -41,16 +43,17 @@ const Doctor = () => {
                 ...list,
                 {
                     id: nanoid(),
-                    patient: namePatient,
-                    doctor: nameDoctor,
+                    namePatient: namePatient,
+                    nameDoctor: nameDoctor,
                     date: date,
                     time: time,
                     reason: reason,
+                    coments:coments,
                     state: state
                 }
             ])
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
 
         setEditMode(false)
@@ -59,9 +62,69 @@ const Doctor = () => {
         setDate('')
         setTime('')
         setReason('')
+        setComents('')
         setState('')
     }
 
+    const auxUpdate = (item) => {
+        setNamePatient(item.namePatient)
+        setNameDoctor(item.nameDoctor)
+        setDate(item.date)
+        setTime(item.time)
+        setReason(item.reason)
+        setComents(item.coments)
+        setState(item.state)
+    }
+
+    const updateDoctor = async (e) => {
+        e.preventDefault()
+
+        try {
+            const db = firebase.firestore()
+            await db.collection('doctores').update({
+                patient: namePatient,
+                doctor: nameDoctor,
+                date: date,
+                time: time,
+                reason: reason,
+                coments: coments,
+                state: state
+            })
+        } catch (error) {
+            console.error(error);
+        }
+
+        setEditMode(false)
+        setNamePatient('')
+        setNameDoctor('')
+        setDate('')
+        setTime('')
+        setReason('')
+        setComents('')
+        setState('')
+    }
+
+    const deleteDoctor = async (id) =>{
+        try{
+            const db = firebase.firestore()
+            await db.collection('doctores').doc(id).delete()
+            const aux = list.filter(item => item.id !== id)
+            setList(aux)
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    const cancel =()=>{
+        setEditMode(false)
+        setNamePatient('')
+        setNameDoctor('')
+        setDate('')
+        setTime('')
+        setReason('')
+        setComents('')
+        setState('')
+    }
 
     return (
         <div className='container mt-5'>
@@ -126,6 +189,13 @@ const Doctor = () => {
                         placeholder='motivo de la cita'
                         onChange={(e)=>setReason(e.target.value)}
                         value = {reason}
+                    />
+                     <input
+                        className='form-control mb-2'
+                        type="text"
+                        placeholder='acerca de la cita'
+                        onChange={(e)=>setComents(e.target.value)}
+                        value = {coments}
                     />
                     <input
                         className='form-control mb-2'
