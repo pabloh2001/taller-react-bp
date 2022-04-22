@@ -1,5 +1,6 @@
 import React from "react";
 import { nanoid } from "nanoid";
+import {firebase} from '../firebase'
 
 const Doctor = () => {
     const [id, setId] = React.useState('')
@@ -12,6 +13,54 @@ const Doctor = () => {
     const [list, setList] = React.useState([])
     const [editMode, setEditMode] = React.useState(null)
     const [error, setError] = React.useState(null)
+
+
+    const save = async (e) => {
+        e.preventDefault()
+
+        if (!namePatient.trim()) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo nombre está vacio!'
+            })
+        }
+
+        try {
+            const db = firebase.firestore()
+            const cita = {
+                patient: namePatient,
+                doctor: nameDoctor,
+                date: date,
+                time: time,
+                reason: reason,
+                state: state
+            }
+            await db.collection('doctores').add(cita)
+            setList([
+                ...list,
+                {
+                    id: nanoid(),
+                    patient: namePatient,
+                    doctor: nameDoctor,
+                    date: date,
+                    time: time,
+                    reason: reason,
+                    state: state
+                }
+            ])
+        } catch (error) {
+            console.log(error);
+        }
+
+        setEditMode(false)
+        setNamePatient('')
+        setNameDoctor('')
+        setDate('')
+        setTime('')
+        setReason('')
+        setState('')
+    }
 
 
     return (
