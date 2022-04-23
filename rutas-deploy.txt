@@ -1,0 +1,5 @@
+Amplify app:
+https://main.d18wi1gifykvly.amplifyapp.com/
+
+Netlify app:
+https://venerable-cocada-bf97ad.netlify.app/
