@@ -5,6 +5,71 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 const mySwal = withReactContent(Swal)
 
+function validators(namePatient, nameDoctor, date, time, reason, eps, place, state) {
+    if (!namePatient.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo nombre paciente está vacio!'
+        })
+    }
+
+    if (!nameDoctor.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo nombre doctor está vacio!'
+        })
+    }
+
+    if (!date.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo fecha está vacio!'
+        })
+    }
+
+    if (!time.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo hora está vacio!'
+        })
+    }
+
+    if (!reason.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo razón de la cita está vacio!'
+        })
+    }
+
+    if (!eps.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo eps está vacio!'
+        })
+    }
+    if (!place.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo lugar está vacio!'
+        })
+    }
+    
+    if (!state.trim()) {
+        return mySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'El campo estado está vacio!'
+        })
+    }
+}
+
 const Doctor = () => {
     const [id, setId] = React.useState('')
     const [namePatient, setNamePatient] = React.useState('')
@@ -12,11 +77,11 @@ const Doctor = () => {
     const [date, setDate] = React.useState('')
     const [time, setTime] = React.useState('')
     const [reason, setReason] = React.useState('')
-    const [coments, setComents] = React.useState('')
+    const [eps, setEps] = React.useState('')
+    const [place, setPlace] = React.useState('')
     const [state, setState] = React.useState('')
     const [list, setList] = React.useState([])
-    const [editMode, setEditMode] = React.useState(null)
-    const [error, setError] = React.useState(null)
+    const [editMode, setEditMode] = React.useState(false)
 
     React.useEffect(()=>{
         const getData = async () =>{
@@ -43,13 +108,7 @@ const Doctor = () => {
     const saveDoctor = async (e) => {
         e.preventDefault()
 
-        if (!namePatient.trim()) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'El campo nombre está vacio!'
-            })
-        }
+        validators(namePatient, nameDoctor, date, time, reason, eps, place, state)
 
         try {
             const db = firebase.firestore()
@@ -59,7 +118,8 @@ const Doctor = () => {
                 date: date,
                 time: time,
                 reason: reason,
-                coments: coments,
+                eps: eps,
+                place: place,
                 state: state
             }
             await db.collection('doctores').add(cita)
@@ -72,22 +132,23 @@ const Doctor = () => {
                     date: date,
                     time: time,
                     reason: reason,
-                    coments:coments,
+                    eps: eps,
+                    place: place,
                     state: state
                 }
             ])
         } catch (error) {
             console.error(error);
         }
-
-        setEditMode(false)
         setNamePatient('')
         setNameDoctor('')
         setDate('')
         setTime('')
         setReason('')
-        setComents('')
+        setEps('')
+        setPlace('')
         setState('')
+        setEditMode(false)
     }
 
     const auxUpdate = (item) => {
@@ -96,36 +157,43 @@ const Doctor = () => {
         setDate(item.date)
         setTime(item.time)
         setReason(item.reason)
-        setComents(item.coments)
+        setEps(item.eps)
+        setPlace(item.place)
         setState(item.state)
+        setEditMode(true)
+        setId(item.id)
     }
 
-    const updateDoctor = async (e) => {
+    const updateDoctor = async e => {
         e.preventDefault()
+
+        validators(namePatient, nameDoctor, date, time, reason, eps, place, state)
 
         try {
             const db = firebase.firestore()
-            await db.collection('doctores').update({
+            await db.collection('doctores').doc(id).update({
                 patient: namePatient,
                 doctor: nameDoctor,
                 date: date,
                 time: time,
                 reason: reason,
-                coments: coments,
+                eps: eps,
+                place: place,
                 state: state
             })
         } catch (error) {
             console.error(error);
         }
 
-        setEditMode(false)
         setNamePatient('')
         setNameDoctor('')
         setDate('')
         setTime('')
         setReason('')
-        setComents('')
+        setEps('')
+        setPlace('')
         setState('')
+        setEditMode(false)
     }
 
     const deleteDoctor = async (id) =>{
@@ -140,14 +208,15 @@ const Doctor = () => {
     }
 
     const cancel =()=>{
-        setEditMode(false)
         setNamePatient('')
         setNameDoctor('')
         setDate('')
         setTime('')
         setReason('')
-        setComents('')
+        setEps('')
+        setPlace('')
         setState('')
+        setEditMode(false)
     }
 
     return (
@@ -155,7 +224,7 @@ const Doctor = () => {
         <h1 className='text-center'>TALLER REACT</h1>
         <hr/>
         <div className='row'>
-            <div className="col-8">
+            <div className="table-responsive">
                 <h4 className="text-center">Listado de Citas</h4>
                 <table className="table table-striped">
                     <thead>
@@ -165,7 +234,8 @@ const Doctor = () => {
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Razón de la Cita</th>
-                            <th>Comentarios</th>
+                            <th>EPS</th>
+                            <th>Lugar</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -179,11 +249,12 @@ const Doctor = () => {
                                 <td>{item.date}</td>
                                 <td>{item.time}</td>
                                 <td>{item.reason}</td>
-                                <td>{item.coments}</td>
+                                <td>{item.eps}</td>
+                                <td>{item.place}</td>
                                 <td>{item.state}</td>
                                 <td>
-                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> deleteDoctor(item.id)}>Eliminar</button>
-                            <button className='btn btn-warning btn-sm float-end' onClick={()=> auxUpdate(item)}>editar</button>
+                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> deleteDoctor(item.id)}><i className="fa-solid fa-trash-can"></i></button>
+                            <button className='btn btn-warning btn-sm float-end' onClick={()=> auxUpdate(item)}><i className="fa-solid fa-file-pen"></i></button>
                                 </td>
                             </tr>
                         ))
@@ -191,75 +262,98 @@ const Doctor = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="col-4">
+            <div className="container mt-5">
                 <h4 className="text-center">
                     {
                         editMode ? 'Editar Doctor': 'Agregar Doctor'
                     }
                 </h4>
-                <form onSubmit={editMode ? updateDoctor: saveDoctor}>
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='nombre del paciente'
-                        onChange={(e)=>setNamePatient(e.target.value)}
-                        value = {namePatient}
-                    />
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='nombre del doctor'
-                        onChange={(e)=>setNameDoctor(e.target.value)}
-                        value = {nameDoctor}
-                    />
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='fecha de la cita'
-                        onChange={(e)=>setDate(e.target.value)}
-                        value = {date}
-                    />
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='hora de la cita'
-                        onChange={(e)=>setTime(e.target.value)}
-                        value = {time}
-                    />
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='motivo de la cita'
-                        onChange={(e)=>setReason(e.target.value)}
-                        value = {reason}
-                    />
-                     <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='acerca de la cita'
-                        onChange={(e)=>setComents(e.target.value)}
-                        value = {coments}
-                    />
-                    <input
-                        className='form-control mb-2'
-                        type="text"
-                        placeholder='estado de la cita'
-                        onChange={(e)=>setState(e.target.value)}
-                        value = {state}
-                    />
-
-
-                    {
-                        !editMode? (
-                            <button className='btn btn-primary btn-block' type='submit'>Agregar</button>
-                        )
-                        :
-                        (  <>
-                            <button className='btn btn-warning btn-block' type='submit'>Editar</button>
-                            <button className='btn btn-dark btn-block mx-2' onClick={() => cancel()}>Cancelar</button>
-                            </>
-                        )
-                    }
+                <form className="row g-3 justify-content-center" onSubmit={editMode ? updateDoctor: saveDoctor}>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='nombre del paciente'
+                            onChange={(e)=>setNamePatient(e.target.value)}
+                            value = {namePatient}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='nombre del doctor'
+                            onChange={(e)=>setNameDoctor(e.target.value)}
+                            value = {nameDoctor}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='fecha de la cita'
+                            onChange={(e)=>setDate(e.target.value)}
+                            value = {date}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='hora de la cita'
+                            onChange={(e)=>setTime(e.target.value)}
+                            value = {time}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='motivo de la cita'
+                            onChange={(e)=>setReason(e.target.value)}
+                            value = {reason}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='eps afiliado'
+                            onChange={(e)=>setEps(e.target.value)}
+                            value = {eps}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='lugar de la cita'
+                            onChange={(e)=>setPlace(e.target.value)}
+                            value = {place}
+                        />
+                    </div>
+                    <div className="col-md-5">
+                        <input
+                            className='form-control mb-2'
+                            type="text"
+                            placeholder='estado de la cita'
+                            onChange={(e)=>setState(e.target.value)}
+                            value = {state}
+                        />
+                    </div>
+                    <div className="col-md-10">
+                        {
+                            !editMode? (
+                                <button className='btn btn-primary btn-block' type='submit'>Agregar</button>
+                            )
+                            :
+                            (  <>
+                                <button className='btn btn-warning btn-block' type='submit'>Editar</button>
+                                <button className='btn btn-dark btn-block mx-2' onClick={() => cancel()}>Cancelar</button>
+                                </>
+                            )
+                        }
+                    </div>
                                           
                 </form>
             </div>
