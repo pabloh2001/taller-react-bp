@@ -5,71 +5,6 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 const mySwal = withReactContent(Swal)
 
-function validators(namePatient, nameDoctor, date, time, reason, eps, place, state) {
-    if (!namePatient.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo nombre paciente está vacio!'
-        })
-    }
-
-    if (!nameDoctor.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo nombre doctor está vacio!'
-        })
-    }
-
-    if (!date.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo fecha está vacio!'
-        })
-    }
-
-    if (!time.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo hora está vacio!'
-        })
-    }
-
-    if (!reason.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo razón de la cita está vacio!'
-        })
-    }
-
-    if (!eps.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo eps está vacio!'
-        })
-    }
-    if (!place.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo lugar está vacio!'
-        })
-    }
-    
-    if (!state.trim()) {
-        return mySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'El campo estado está vacio!'
-        })
-    }
-}
-
 const Doctor = () => {
     const [id, setId] = React.useState('')
     const [namePatient, setNamePatient] = React.useState('')
@@ -108,7 +43,76 @@ const Doctor = () => {
     const saveDoctor = async (e) => {
         e.preventDefault()
 
-        validators(namePatient, nameDoctor, date, time, reason, eps, place, state)
+        if (!namePatient.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo nombre paciente está vacio!'
+            })
+            return
+        }
+    
+        if (!nameDoctor.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo nombre doctor está vacio!'
+            })
+            return 
+        }
+    
+        if (!date.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo fecha está vacio!'
+            })
+            return 
+        }
+    
+        if (!time.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo hora está vacio!'
+            })
+            return 
+        }
+    
+        if (!reason.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo razón de la cita está vacio!'
+            })
+            return 
+        }
+    
+        if (!eps.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo eps está vacio!'
+            })
+            return 
+        }
+        if (!place.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo lugar está vacio!'
+            })
+            return 
+        }
+        
+        if (!state.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo estado está vacio!'
+            })
+            return 
+        }
 
         try {
             const db = firebase.firestore()
@@ -123,6 +127,13 @@ const Doctor = () => {
                 state: state
             }
             await db.collection('doctores').add(cita)
+            mySwal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Cita registrada exitosamente',
+                showConfirmButton: false,
+                timer: 1500
+            })
             setList([
                 ...list,
                 {
@@ -167,7 +178,76 @@ const Doctor = () => {
     const updateDoctor = async e => {
         e.preventDefault()
 
-        validators(namePatient, nameDoctor, date, time, reason, eps, place, state)
+        if (!namePatient.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo nombre paciente está vacio!'
+            })
+            return
+        }
+    
+        if (!nameDoctor.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo nombre doctor está vacio!'
+            })
+            return 
+        }
+    
+        if (!date.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo fecha está vacio!'
+            })
+            return 
+        }
+    
+        if (!time.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo hora está vacio!'
+            })
+            return 
+        }
+    
+        if (!reason.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo razón de la cita está vacio!'
+            })
+            return 
+        }
+    
+        if (!eps.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo eps está vacio!'
+            })
+            return 
+        }
+        if (!place.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo lugar está vacio!'
+            })
+            return 
+        }
+        
+        if (!state.trim()) {
+            mySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El campo estado está vacio!'
+            })
+            return 
+        }
 
         try {
             const db = firebase.firestore()
@@ -180,6 +260,13 @@ const Doctor = () => {
                 eps: eps,
                 place: place,
                 state: state
+            })
+            mySwal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Cita actualizada',
+                showConfirmButton: false,
+                timer: 1500
             })
         } catch (error) {
             console.error(error);
@@ -207,6 +294,28 @@ const Doctor = () => {
         }
     }
 
+    const confirmDelete = (id) => {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Eliminar!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteDoctor(id)
+                Swal.fire(
+                    'Eliminado!',
+                    'La cita ha sido eliminada.',
+                    'success'
+                )
+            }
+        })
+    }
+
     const cancel =()=>{
         setNamePatient('')
         setNameDoctor('')
@@ -220,7 +329,7 @@ const Doctor = () => {
     }
 
     return (
-        <div className='container mt-5'>
+        <div className='container mt-3'>
         <h1 className='text-center'>TALLER REACT</h1>
         <hr/>
         <div className='row'>
@@ -253,7 +362,7 @@ const Doctor = () => {
                                 <td>{item.place}</td>
                                 <td>{item.state}</td>
                                 <td>
-                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> deleteDoctor(item.id)}><i className="fa-solid fa-trash-can"></i></button>
+                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=> confirmDelete(item.id)}><i className="fa-solid fa-trash-can"></i></button>
                             <button className='btn btn-warning btn-sm float-end' onClick={()=> auxUpdate(item)}><i className="fa-solid fa-file-pen"></i></button>
                                 </td>
                             </tr>
@@ -262,7 +371,7 @@ const Doctor = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="container mt-5">
+            <div className="container">
                 <h4 className="text-center">
                     {
                         editMode ? 'Editar Doctor': 'Agregar Doctor'
